@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: inventory-service
+  name: inventory-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: inventory-service
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: inventory-service
+    spec:
+      containers:
+        - env:
+            - name: SPRING_PROFILE_ACTIVE
+              value: test 
+            - name: APPLICATION_ALLOWED_ORIGINS
+              value: api-gateway,order-service 
+            - name: DB_HOST
+              valueFrom:
+               configMapKeyRef:
+                 name: services-common-config
+                 key: dbHost
+            - name: DB_USERNAME
+              valueFrom:
+               secretKeyRef:
+                 name: mysql-secrets
+                 key: username
+            - name: ZIPKIN_URL
+              valueFrom:
+               configMapKeyRef:
+                 name: services-common-config
+                 key: zipkinUrl 
+          image: inventory-service:1.0
+          name: inventory-service
+          ports:
+            - containerPort: 8082
+          resources: {}
+#      restartPolicy: Always
+#status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: inventory-service
+  name: inventory-service
+spec:
+  ports:
+    - protocol: TCP
+      port: 8082
+      targetPort: 8082
+  selector:
+    app: inventory-service
+    
+#status:
+#  loadBalancer: {}

@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: notification-service
+  name: notification-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification-service
+  strategy: {}
+  template:
+    metadata:
+
+      labels:
+        app: notification-service
+    spec:
+      containers:
+        - env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: test
+            - name: ZIPKIN_URL
+              valueFrom:
+               configMapKeyRef:
+                 name: services-common-config
+                 key: zipkinUrl
+            - name: KAFKA_SERVER
+              valueFrom:
+               configMapKeyRef:
+                 name: services-common-config
+                 key: kafkaServer
+          image: notification-service:1.0
+          name: notification-service
+          ports:
+            - containerPort: 8085
+          resources: {}
+#      restartPolicy: Always
+#status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: notification-service
+  name: notification-service
+spec:
+  ports:
+    - protocol: TCP
+      port: 8085
+      targetPort: 8085
+  selector:
+    app: notification-service
+    
+#status:
+#  loadBalancer: {}

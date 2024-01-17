@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: order-service
+  name: order-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order-service
+  strategy: {}
+  template:
+    metadata:
+
+      labels:
+        app: order-service
+    spec:
+      containers:
+        - env:
+            - name: SPRING_PROFILE_ACTIVE
+              value: test
+            - name: APPLICATION_ALLOWED_ORIGINS
+              value: http://api-gateway       
+            - name: DB_HOST                       
+              valueFrom:
+               configMapKeyRef:
+                 name: services-common-config
+                 key: dbHost
+            - name: DB_USERNAME
+              valueFrom:
+               secretKeyRef:
+                 name: mysql-secrets
+                 key: username
+            - name: ZIPKIN_URL
+              valueFrom:
+               configMapKeyRef:
+                 name: services-common-config
+                 key: zipkinUrl
+            - name: KAFKA_SERVER
+              valueFrom:
+               configMapKeyRef:
+                 name: services-common-config
+                 key: kafkaServer
+          image: order-service:1.0
+          name: order-service
+          ports:
+            - containerPort: 8081
+          resources: {}
+#      restartPolicy: Always
+#status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: order-service
+  name: order-service
+spec:
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8081
+  selector:
+    app: order-service
+    
+#status:
+#  loadBalancer: {}

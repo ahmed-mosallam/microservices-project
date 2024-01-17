@@ -1,0 +1,7 @@
+apiVersion : v1
+kind : ConfigMap
+metadata:
+  name : zookeeper-config
+data:
+  zookeeperClientPort: '8090'
+  zookeeperTickTime: '2000' 

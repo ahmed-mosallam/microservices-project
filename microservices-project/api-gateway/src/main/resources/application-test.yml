@@ -1,0 +1,14 @@
+spring:
+   cloud:
+    kubernetes: 
+      discovery:
+        enabled: true
+        include-not-ready-addresses: true
+   zipkin:
+     base-url: http://${ZIPKIN_URL}
+eureka:
+   client:
+    enabled: false
+
+    
+    

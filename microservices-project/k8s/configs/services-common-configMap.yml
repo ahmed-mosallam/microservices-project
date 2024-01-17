@@ -1,0 +1,8 @@
+apiVersion : v1
+kind : ConfigMap
+metadata:
+  name : services-common-config
+data:
+  zipkinUrl: zipkin-service:9411
+  kafkaServer : kafka-broker:9092  
+  dbHost: mysql

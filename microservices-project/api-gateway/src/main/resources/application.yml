@@ -1,0 +1,48 @@
+eureka:
+   client:    enabled: true      
+    serviceUrl:
+        defaultZone: http://localhost:8761/eureka
+spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE}
+  application:
+    name: api-gateway
+  zipkin:
+    base-url: http://localhost:9411
+  sleuth:
+    sampler:
+      probability: 1.0      cloud:
+    kubernetes:      discovery:        enabled: false    gateway:      routes:      - id: product-service
+        uri: lb://product-service
+        predicates: Path=/api/product
+        filters:        - AuthorizationFilter
+        
+      - id: order-service
+        uri: lb://order-service
+        predicates: 
+        - Path=/api/order/** 
+        
+      - id: inventory-service
+        uri: lb://inventory-service
+        predicates:
+        - Path=/api/inventory
+        
+      - id: authorization-server
+        uri: lb://authorization-server
+        predicates:
+        - Path=/user/** , /test/**   
+        
+      - id: discovery-server
+        uri: http://localhost:8761
+        predicates: 
+        - Path=/eureka/web  
+        
+      - id: discovery-server-static
+        uri: http://localhost:8761
+        predicates: 
+        - Path=/eureka/**
+        
+server:
+    port: 8083       
+        
+                                 

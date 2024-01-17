@@ -1,0 +1,10 @@
+apiVersion : v1
+kind : ConfigMap
+metadata:
+  name : kafka-config
+data:
+  kafkaBrokerId: '1'
+  kafkaOffsetTopicReplicationFactor: '1'
+  kafkaTransactionStateLogMinIsr: '1'
+  kafkaTransactionStateLogReplicationFactor: '1'
+  kafkaZookeeperConnection: zookeeper-service:8070

@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: authorization-server
+  name: authorization-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: authorization-server
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: authorization-server
+    spec:
+      containers:
+        - env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: test 
+            - name: APPLICATION_ALLOWED_ORIGINS
+              value: api-gateway 
+            - name: DB_HOST
+              valueFrom:
+               configMapKeyRef:
+                 name: services-common-config
+                 key: dbHost
+            - name: DB_USERNAME
+              valueFrom:
+               secretKeyRef:
+                 name: mysql-secrets
+                 key: username
+            - name: ZIPKIN_URL
+              valueFrom:
+               configMapKeyRef:
+                 name: services-common-config
+                 key: zipkinUrl 
+          image: authorization-server:1.0
+          name: authorization-server
+          ports:
+            - containerPort: 8084
+          resources: {}
+#      restartPolicy: Always
+#status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: authorization-server
+  name: authorization-server
+spec:
+  ports:
+    - protocol: TCP
+      port: 8084
+      targetPort: 8084
+  selector:
+    app: authorization-server
+    
+#status:
+#  loadBalancer: {}
