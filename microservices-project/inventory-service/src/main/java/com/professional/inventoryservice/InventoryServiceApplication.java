@@ -10,6 +10,7 @@ public class InventoryServiceApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(InventoryServiceApplication.class, args);
+		System.out.println("this version should be deployed from jenkins");
 	}
 
 }

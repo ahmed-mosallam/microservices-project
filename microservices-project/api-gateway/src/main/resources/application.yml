@@ -20,12 +20,16 @@ spring:
       - id: order-service
         uri: lb://order-service
         predicates: 
-        - Path=/api/order/** 
+        - Path=/api/order/**
+        filters:
+        - AuthorizationFilter 
         
       - id: inventory-service
         uri: lb://inventory-service
         predicates:
         - Path=/api/inventory
+        filters:
+        - AuthorizationFilter
         
       - id: authorization-server
         uri: lb://authorization-server

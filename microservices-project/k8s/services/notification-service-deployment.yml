@@ -30,7 +30,7 @@ spec:
                configMapKeyRef:
                  name: services-common-config
                  key: kafkaServer
-          image: notification-service:1.0
+          image: notification-service:1.1
           name: notification-service
           ports:
             - containerPort: 8085

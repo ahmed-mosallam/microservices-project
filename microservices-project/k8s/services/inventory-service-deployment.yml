@@ -36,7 +36,7 @@ spec:
                configMapKeyRef:
                  name: services-common-config
                  key: zipkinUrl 
-          image: inventory-service:1.0
+          image: inventory-service:1.1
           name: inventory-service
           ports:
             - containerPort: 8082

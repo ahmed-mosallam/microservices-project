@@ -24,7 +24,7 @@ spec:
                   key :  zipkinUrl
             - name: SPRING_PROFILES_ACTIVE
               value: test
-          image: api-gateway:1.0
+          image: api-gateway:1.1
           name: api-gateway
           ports:
             - containerPort: 8083

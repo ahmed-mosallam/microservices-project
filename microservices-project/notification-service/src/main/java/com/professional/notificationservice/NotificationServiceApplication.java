@@ -23,5 +23,6 @@ public class NotificationServiceApplication {
     public void handleNotification(OrderPlacedEvent orderPlacedEvent) {
         // send out an email notification
         log.info("Received Notification for Order - {}", orderPlacedEvent.getOrderNumber());
+        System.out.println("this version should be deployed from jenkins");
     }
 }
