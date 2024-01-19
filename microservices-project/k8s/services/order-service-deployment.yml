@@ -42,7 +42,7 @@ spec:
                configMapKeyRef:
                  name: services-common-config
                  key: kafkaServer
-          image: order-service:1.0
+          image: order-service:1.1
           name: order-service
           ports:
             - containerPort: 8081
