@@ -36,7 +36,7 @@ spec:
                configMapKeyRef:
                  name: services-common-config
                  key: zipkinUrl 
-          image: ahmedmosallam/authorization-server:latest
+          image: ahmedmosallam/authorization-server:1.1
           name: authorization-server
           ports:
             - containerPort: 8084

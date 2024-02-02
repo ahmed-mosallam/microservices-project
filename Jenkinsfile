@@ -58,10 +58,10 @@ pipeline {
 					changes.each {c -> 				    
 						if(c.indexOf("Jenkinsfile")==-1){
 							if(c.indexOf("k8s")==-1 ){
-							  def changeSplits = c.split("/",1)
-							  affectedModules.add(changeSplits[1].substring(0,c.indexOf("/")))
+							  def changeSplits = c.split("/")
+							  affectedModules.add(changeSplits[1])
 							}else{
-							  def changeSplits = c.split("/",1)
+							  def changeSplits = c.split("/",2)
 							  affectedK8sFiles.add(changeSplits[1])
 						    }
                         } 						
@@ -111,22 +111,24 @@ pipeline {
 					goal = "install"		
 					// -T 5 means we can build modules in parallel using 5 Threads, we can scale this
 					for(int i=0; i< affectedModules.size(); i++ ){
-					    dir('${parentModule}/${affectedModules[i]}'){
+					    dir(parentModule+'/'+affectedModules[i]){
+					        def tag = '1.1'
+					        def imageNameTag = 'ahmedmosallam/'+affectedModules[i]+':'+tag
 							if (isUnix()) {
 								sh "mvn clean ${goal} -DskipTests"
-								sh('docker build -t ahmedmosallam/${affectedModules[i]}:latest .')
+								sh "docker build -t ${imageNameTag} ."
 								withCredentials([string(credentialsId: 'dockerhup-pwd', variable: 'dockerhup-pwd')]) {
-                                   sh 'docker login -u ahmedmosallam -p ${dockerhup-pwd}'
-                                }
-								sh 'docker push ahmedmosallam/${affectedModules[i]}:latest'
-								
+                                   sh "docker login -u ahmedmosallam -p ${dockerhup-pwd}"
+                                   sh "docker push ${imageNameTag}"
+                                }								
 							} else {
 								bat "mvn clean ${goal} -DskipTests"	
-								bat('docker build -t ahmedmosallam/${affectedModules[i]}:latest .')
+								bat 'docker build -t ${imageNameTag} .'
 								withCredentials([string(credentialsId: 'dockerhup-pwd', variable: 'dockerhup-pwd')]) {
-                                   bat 'docker login -u ahmedmosallam -p ${dockerhup-pwd}'
+                                   bat "docker login -u ahmedmosallam -p ${dockerhup-pwd}"
+                                   bat "docker push ${imageNameTag}"
                                 }
-								sh 'docker push ahmedmosallam/${affectedModules[i]}:latest'
+								
 							}
 							
 							
@@ -143,13 +145,20 @@ pipeline {
 		    script{
 			   for(int i=0; i< affectedK8sFiles.size(); i++ ){
 				def changedK8sFileNameSplits = affectedK8sFiles[i].split("/")
-				def changedK8sFileName = changedK8sFileNamesSplits[changedK8sFileNamesSplits.length-1]
+				def changedK8sFileName = changedK8sFileNameSplits[changedK8sFileNameSplits.length-1]
 				echo 'changed k8s file name ${changedK8sFileName}'
-				dir('${parentModule}/${affectedK8sFiles[i]}'){
+				def affectedFilePath =affectedK8sFiles[i].substring(0,affectedK8sFiles[i].lastIndexOf("/")) 
+			    echo 'affected k8s file path ${affectedFilePath}'
+				def workDir=parentModule+'/'+affectedFilePath
+				echo 'working directory ${workDir}'
+				dir(workDir){
 					if (isUnix()) {
-						sh "kubectl apply -f ${changedK8sFileName}"
+						sh "kubectl apply -f ${changedK8sFileName} --context minikube"
 					} else {
-						bat "kubectl apply -f ${changedK8sFileName}"
+					    kubeconfig(credentialsId: 'cd478dd4-44a1-4d69-800e-a98a66bcc5fb', serverUrl: 'https://192.168.59.100:8443') {
+                           bat "kubectl apply -f ${changedK8sFileName}"
+                        }
+						
 					}
 				}
 			  }
