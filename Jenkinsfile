@@ -123,7 +123,7 @@ pipeline {
                                 }								
 							} else {
 								bat "mvn clean ${goal} -DskipTests"	
-								bat 'docker build -t ${imageNameTag} .'
+								bat "docker build -t ${imageNameTag} ."
 								withCredentials([string(credentialsId: 'dockerhup-pwd', variable: 'dockerhup-pwd')]) {
                                    bat "docker login -u ahmedmosallam -p ${dockerhup-pwd}"
                                    bat "docker push ${imageNameTag}"
@@ -146,11 +146,11 @@ pipeline {
 			   for(int i=0; i< affectedK8sFiles.size(); i++ ){
 				def changedK8sFileNameSplits = affectedK8sFiles[i].split("/")
 				def changedK8sFileName = changedK8sFileNameSplits[changedK8sFileNameSplits.length-1]
-				echo 'changed k8s file name ${changedK8sFileName}'
+				echo "changed k8s file name ${changedK8sFileName}"
 				def affectedFilePath =affectedK8sFiles[i].substring(0,affectedK8sFiles[i].lastIndexOf("/")) 
-			    echo 'affected k8s file path ${affectedFilePath}'
+			    echo "affected k8s file path ${affectedFilePath}"
 				def workDir=parentModule+'/'+affectedFilePath
-				echo 'working directory ${workDir}'
+				echo "working directory ${workDir}"
 				dir(workDir){
 					if (isUnix()) {
 						sh "kubectl apply -f ${changedK8sFileName} --context minikube"
