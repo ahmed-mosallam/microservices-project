@@ -14,6 +14,6 @@ public class AuthorizationServerApplication {
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 		System.out.println("user pass : " +encoder.encode("testuser"));
 		System.out.println("admin pass : "+encoder.encode("testadmin"));
-		System.out.println("this version should be deployed from jenkins pipeline v4");
+		System.out.println("this version should be deployed from jenkins pipeline v5");
 	}
 }
