@@ -25,6 +25,7 @@ spec:
             - name: SPRING_PROFILES_ACTIVE
               value: test
           image: ahmedmosallam/api-gateway:1.1
+          imagePullPolicy: IfNotPresent
           name: api-gateway
           ports:
             - containerPort: 8083

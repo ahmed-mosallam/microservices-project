@@ -37,6 +37,7 @@ spec:
                  name: services-common-config
                  key: zipkinUrl 
           image: ahmedmosallam/authorization-server:1.1
+          imagePullPolicy: IfNotPresent
           name: authorization-server
           ports:
             - containerPort: 8084

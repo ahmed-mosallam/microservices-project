@@ -117,15 +117,15 @@ pipeline {
 							if (isUnix()) {
 								sh "mvn clean ${goal} -DskipTests"
 								sh "docker build -t ${imageNameTag} ."
-								withCredentials([string(credentialsId: 'dockerhup-pwd', variable: 'dockerhup-pwd')]) {
-                                   sh "docker login -u ahmedmosallam -p ${dockerhup-pwd}"
+								withCredentials([string(credentialsId: 'dockerhub-pwd', variable: 'dockerhubpwd')]) {
+                                   sh "docker login -u ahmedmosallam -p ${dockerhubpwd}"
                                    sh "docker push ${imageNameTag}"
                                 }								
 							} else {
 								bat "mvn clean ${goal} -DskipTests"	
 								bat "docker build -t ${imageNameTag} ."
-								withCredentials([string(credentialsId: 'dockerhup-pwd', variable: 'dockerhup-pwd')]) {
-                                   bat "docker login -u ahmedmosallam -p ${dockerhup-pwd}"
+								withCredentials([string(credentialsId: 'dockerhub-pwd', variable: 'dockerhubpwd')]) {
+                                   bat "docker login -u ahmedmosallam -p ${dockerhubpwd}"
                                    bat "docker push ${imageNameTag}"
                                 }
 								
